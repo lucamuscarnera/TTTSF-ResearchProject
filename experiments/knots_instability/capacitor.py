@@ -22,7 +22,7 @@ def main():
   X,t = build_capacitor_dataset(250, 123)
 
   print("computing the smoothing factors")
-  ax = plt.figure(figsize = (10,3)).subplots(nrows = 1,ncols = len(K))
+  ax = plt.figure(figsize = (4 * len(K),3)).subplots(nrows = 1,ncols = len(K))
 
   # set the number of knots
   for i,k in enumerate(K):
