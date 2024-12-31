@@ -20,11 +20,11 @@ def main():
 
   # simulation data
   N     = 1000
-  steps = 100
+  steps = 30
 
   # define the initial data and the final data
-  X_0 = np.random.uniform(size = (N, 2)) * 2 - 1
-  X_f = jnp.exp(X_0)
+  X_0 = np.random.randn(N, 2)
+  X_f = X_0 - X_0 ** 2
 
   # initialize buffer
   B = X_0.copy()
@@ -50,7 +50,7 @@ def main():
     res    = X_next - (phi(B) @ W)
 
     # fit residual with a neural network
-    net    = jnn.network([B.shape[1], 300, 300 , X_next.shape[1]])
+    net    = jnn.network([B.shape[1], 300, 300, X_next.shape[1]])
     net.train(B, res, jnn.network.base_configuration)
     print("network error = %.10f" % ((res - net.batch_predict(B))**2).mean())
 
