@@ -15,14 +15,17 @@ def build_capacitor_dataset(N,seed):
   return X,t
 
 def main():
+  # list of the number of nodes that are going to be tested
+  K   = [3,5,7,9]
+
   print("Generating data...")
   X,t = build_capacitor_dataset(250, 123)
 
   print("computing the smoothing factors")
-  ax = plt.figure(figsize = (10,3)).subplots(nrows = 1,ncols = 3)
+  ax = plt.figure(figsize = (10,3)).subplots(nrows = 1,ncols = len(K))
 
   # set the number of knots
-  for i,k in enumerate([3,5,7]):
+  for i,k in enumerate(K):
     print("Extracting the smoothing distribution [knots = %d]"  % k)
 
     # extract the smoothing factor and put it into a list
