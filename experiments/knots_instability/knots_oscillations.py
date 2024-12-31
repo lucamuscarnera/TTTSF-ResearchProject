@@ -38,7 +38,6 @@ def optimal_s_for_prediction(t,y):
 def main():
   # load data
   X = np.genfromtxt("../../data/ecg.csv", delimiter = ',')
-  X = X[np.random.choice(len(X),500,False)]
   t = np.linspace(0,1,X.shape[1])
 
 
