@@ -16,7 +16,7 @@ import network
 
 class resnetwork():
   def __init__(self, net, W):
-    self.network = network(net.topology)
+    self.network = network.network(net.topology)
     self.network.params = net.clone_params()
     self.W      = W.copy()
 

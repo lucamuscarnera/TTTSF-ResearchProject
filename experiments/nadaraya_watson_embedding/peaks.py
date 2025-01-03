@@ -33,8 +33,11 @@ def save_gif(fname, data,c):
   ax.set_xlim(min_x,max_x)
   ax.set_ylim(min_y,max_y)
 
+  # associate a color to each class
+  colors = ['C%d' % (i-1) for i in c]
+
   # Scatter plot initialization
-  scatter = ax.scatter(data[0][:,0], data[0][:,1], c = c, s=50)
+  scatter = ax.scatter(data[0][:,0], data[0][:,1], c = colors, s=50)
 
   # Update function for animation
   def update(frame):

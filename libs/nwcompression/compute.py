@@ -73,9 +73,9 @@ class NWCompression:
     return jnp.exp( - (x - y)@(x - y) )
 
   # prediction after training
-  def final_predict(x,X,Y):
+  def final_predict(self,x,X,Y):
     # build weights
-    K = jax.vmap(lambda x_i: k(x,x_i))(X)
+    K = jax.vmap(lambda x_i: self.k(x,x_i))(X)
 
     # build linear combination of time series based on weights
     C = K[:,None] * Y

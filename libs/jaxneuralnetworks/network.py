@@ -93,4 +93,4 @@ class network:
   #########################################################################################
 
   def clone_params(self):
-    return [1. * p for p in params]
+    return [1. * p for p in self.params]

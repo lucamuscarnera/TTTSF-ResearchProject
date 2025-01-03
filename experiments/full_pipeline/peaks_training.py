@@ -1,0 +1,83 @@
+#!/usr/bin/env python
+
+# classic imports
+import numpy as  np
+import matplotlib.pyplot as  plt
+
+# parallel computing
+import jax
+import jax.numpy as jnp
+
+# custom imports
+import libsfinder
+from nwcompression.compute import NWCompression as nwc
+from jaxneuralnetworks import network as jnn
+from jaxneuralnetworks import resnetwork as jrnn
+
+def peaks(N,seed):
+  classes = [1,2,3,4]
+
+  np.random.seed(seed)
+  X_1 = np.random.choice(classes, size = N)
+  X_2 = np.random.uniform(size = N)
+
+  X   = np.c_[X_1,X_2]
+  t   = np.linspace(0,1,50)
+  def y(x,t):
+      return jnp.exp( - 10* x[0] * ( t - x[1])**2 )
+  Y   = jax.vmap(lambda x: y(x,t))(X)
+  return X,Y
+
+def main():
+  # generate  data
+  N            = 150
+  X,Y          = peaks(N,6_01_2025)
+
+  # train the decoder and  latent  representation
+  compressor   = nwc()
+  nwc.base_configuration['steps'] = 3000
+  compressor.fit(Y, nwc.base_configuration)
+
+  # train the encoder
+  def phi(X):
+    return np.c_[ np.ones((len(X),1)), X]
+
+  # train the linear encoder
+  W      = np.linalg.pinv(phi(X)) @ compressor.E
+  res    = compressor.E - (phi(X) @ W)
+  net    = jnn.network([X.shape[1], 200, 200, 200, compressor.E.shape[1]])
+
+  configuration = jnn.network.base_configuration.copy()
+  configuration['epochs'] = 10_000
+  configuration['lr'] = 1e-2
+  configuration['xi'] = 0.9
+
+  net.train(X, res,configuration)
+  encoder = jrnn.resnetwork(net,W)
+
+  E_hat  = phi(X) @ W + net.batch_predict(X)
+
+  coloring = np.c_[E_hat[:,0],E_hat[:,1], 0 * E_hat[:,0]]
+  coloring = (coloring - coloring.min(axis = 0)[None,:]) / (coloring.max(axis = 0) - coloring.min(axis=0))[None,:]
+
+  axs = plt.figure(figsize = (10,5)).subplots(nrows = 1, ncols = 2).flatten()
+  axs[0].scatter(E_hat[:,0],E_hat[:,1], c = coloring )
+  axs[1].scatter(compressor.E[:,0], compressor.E[:,1], c = coloring)
+  plt.show()
+
+  # test some predictions
+
+  X_test,Y_test = peaks(9, 42)
+  axs = plt.figure(figsize = (9,9)).subplots(nrows = 3,ncols = 3).flatten()
+  E_hat =  phi(X_test) @ W + net.batch_predict(X_test)
+  Y_hat =  jax.vmap(compressor.decode)(E_hat)
+
+  for i in range(len(X_test)):
+    axs[i].plot(Y_hat[i])
+    axs[i].plot(Y_test[i])
+
+  plt.show()
+
+if __name__=='__main__':
+  main()
+
