@@ -2,7 +2,7 @@
 
 # custom imports
 import libsfinder
-from nwcompression import compute
+from nwcompression.compute import NWCompression
 
 # classic imports
 import numpy as np
@@ -11,6 +11,7 @@ import jax
 import jax.numpy as jnp
 
 def main():
+  return
   # generate 100 data points for the peak dataset
   N   = 1000
   classes = [1,2,3,4]
@@ -40,6 +41,10 @@ def main():
     axs[plot].set_title("$c = %d$" % i)
 
   plt.savefig("peaks.pdf",bbox_inches='tight')
+
+  # train
+
+  nwc.
 
 if __name__ == '__main__':
   main()
