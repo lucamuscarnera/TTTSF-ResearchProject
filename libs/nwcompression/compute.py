@@ -11,11 +11,11 @@ class NWCompression:
 
   base_configuration = {
      'lr': 1e-3,
-     'xi': 0.99,
-     'steps' : 1500
+     'xi': 0.9,
+     'steps' : 1000
   }
 
-  def fit(self, Y, configuration):
+  def fit(self, Y, configuration,seed = 0):
     # fit functions
     @jax.jit
     def loss(E,X):
@@ -24,6 +24,7 @@ class NWCompression:
 
     # initialize the "big" arrays
     self.Y = Y.copy()
+    np.random.seed(seed)
     E = np.random.randn(Y.shape[0],2) *  1e-10
 
     # training
