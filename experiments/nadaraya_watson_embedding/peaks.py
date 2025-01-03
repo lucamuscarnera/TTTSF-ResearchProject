@@ -2,7 +2,7 @@
 
 # custom imports
 import libsfinder
-from nwcompression.compute import NWCompression
+from nwcompression.compute import NWCompression as nwc
 
 # classic imports
 import numpy as np
@@ -11,12 +11,12 @@ import jax
 import jax.numpy as jnp
 
 def main():
-  return
   # generate 100 data points for the peak dataset
   N   = 1000
   classes = [1,2,3,4]
   axs = plt.figure(figsize = (20,4)).subplots(nrows = 1,ncols = len(classes) + 1)
 
+  np.random.seed(6_01_2025)
   X_1 = np.random.choice(classes, size = N)
   X_2 = np.random.uniform(size = N)
 
@@ -43,8 +43,15 @@ def main():
   plt.savefig("peaks.pdf",bbox_inches='tight')
 
   # train
+  print("Compressing")
+  compressor = nwc()
+  compressor.fit(Y, nwc.base_configuration)
+  plt.figure()
+  plt.scatter(compressor.E[:,0], compressor.E[:,1], c = X_1)
 
-  nwc.
+  print("Saving dimensionality reduction")
+  plt.savefig("reduction.pdf",bbox_inches='tight')
+
 
 if __name__ == '__main__':
   main()

@@ -9,29 +9,39 @@ class NWCompression:
   def __init__(self):
     self.batch_predict = lambda X_in,X,Y : jax.vmap(lambda x: self.predict(x,X,Y))(X_in)
 
-  # fit functions
-  @jax.jit
-  def _loss(E,X):
-    return (( self.batch_predict(E,E,X) -  X )**2).sum()
+  base_configuration = {
+     'lr': 1e-3,
+     'xi': 0.99,
+     'steps' : 1500
+  }
 
   def fit(self, Y, configuration):
+    # fit functions
+    @jax.jit
+    def loss(E,X):
+      return (( self.batch_predict(E,E,X) -  X )**2).sum()
+    grad = jax.jit(jax.grad(loss))
+
     # initialize the "big" arrays
-    self.X = X.copy()
+    self.Y = Y.copy()
     E = np.random.randn(Y.shape[0],2) *  1e-10
 
     # training
     lr = configuration['lr'] # learning rate
     xi = configuration['xi'] # momentum coefficient
+    steps = configuration['steps'] # number of iteratinos
 
     E_fin = E.copy()
+    mom    = E * 0
+    T   = np.geomspace(1e-6,1e-9,steps)
     # iteration scheme
+    bar = tqdm(range(steps))
     for i in bar:
       bar.set_description("%.15f" % loss(E,Y))
       d =  - lr * grad(E,Y) 
-      mom = mom * 0.99  + d
+      mom = mom * xi  + d
       old_E = E.copy()
-      E =  E + mom + T[i] * np.random.normal(size = E.shape)
-
+      E =  E + mom  + T[i] * np.random.normal(size = E.shape)
 
       if np.isnan(E).any():
         break
@@ -39,7 +49,7 @@ class NWCompression:
       if jnp.linalg.norm(E - old_E)/jnp.linalg.norm(old_E) < 0.001:
         lr *= 1.001 # if the training stalls increase  the learning rate
 
-      if loss(E,Y) < loss(E_fin,Y):
+      if loss(E,Y) < loss(E_fin,Y): # update  the return value only if improving
         E_fin = E.copy()
 
     # save data
@@ -50,7 +60,7 @@ class NWCompression:
   def decode(self, e):
     return self.final_predict(e,self.E,self.Y)
 
-  def k(x,y):
+  def k(self,x,y):
     return jnp.exp( - (x - y)@(x - y) )
 
   # prediction after training
@@ -67,9 +77,9 @@ class NWCompression:
 
 
   # prediction during training
-  def predict(x,X,Y):
+  def predict(self,x,X,Y):
     # build weights
-    K = jax.vmap(lambda x_i: k(x,x_i)   * (x != x_i).any()  )(X)
+    K = jax.vmap(lambda x_i: self.k(x,x_i)   * (x != x_i).any()  )(X)
 
     # build linear combination of time series based on weights
     C = K[:,None] * Y
