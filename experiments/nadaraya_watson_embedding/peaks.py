@@ -3,15 +3,60 @@
 # custom imports
 import libsfinder
 from nwcompression.compute import NWCompression as nwc
+import sys
+
 
 # classic imports
 import numpy as np
+
+# graphics
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import matplotlib.animation as animation
+from PIL import Image
+
+# GPU
 import jax
 import jax.numpy as jnp
+import numpy as np
+
+def save_gif(fname, data,c):
+  fig, ax = plt.subplots()
+
+  # set the correct xlim and ylim
+  min_x = np.min([d[:,0].min() for d in data])
+  min_y = np.min([d[:,1].min() for d in data])
+
+  max_x = np.max([d[:,0].max() for d in data])
+  max_y = np.max([d[:,1].max() for d in data])
+
+  ax.set_xlim(min_x,max_x)
+  ax.set_ylim(min_y,max_y)
+
+  # Scatter plot initialization
+  scatter = ax.scatter(data[0][:,0], data[0][:,1], c = c, s=50)
+
+  # Update function for animation
+  def update(frame):
+    # Extract current matrix
+    data_now = data[frame]
+    # Set scatter plot points
+    scatter.set_offsets(np.array(data_now))
+    return scatter,
+
+  # Create animation
+  ani = animation.FuncAnimation(fig, update, frames=len(data), interval=1, blit=True)
+
+  # Save animation as GIF
+  ani.save(fname, writer='pillow')
 
 def main():
+  make_gif = False
+  if len(sys.argv) > 0:
+    gif_name = sys.argv[1]
+    make_gif = True
+    print("save into %s" % gif_name)
+
   # generate 100 data points for the peak dataset
   N   = 1000
   classes = [1,2,3,4]
@@ -46,7 +91,11 @@ def main():
   # train
   print("Compressing")
   compressor = nwc()
-  compressor.fit(Y, nwc.base_configuration)
+  if make_gif:
+    intermediates = compressor.fit(Y, nwc.base_configuration, return_intermediates = True)
+  else:
+    compressor.fit(Y, nwc.base_configuration, return_intermediates = False)
+
   plt.figure()
   for i in classes:
     plt.scatter(compressor.E[X_1 == i][0,0], compressor.E[X_1 == i][0,1], color = "C%d" % (i-1), label = '$c = %d$' % i)
@@ -60,6 +109,10 @@ def main():
   print("Saving dimensionality reduction")
   plt.savefig("reduction.pdf",bbox_inches='tight')
 
+  if make_gif:
+  # creo la gif
+    print("Saving the animation...")
+    save_gif(gif_name,intermediates, X_1)
 
 if __name__ == '__main__':
   main()

@@ -15,7 +15,7 @@ class NWCompression:
      'steps' : 1000
   }
 
-  def fit(self, Y, configuration,seed = 0):
+  def fit(self, Y, configuration,seed = 0, return_intermediates = False):
     # fit functions
     @jax.jit
     def loss(E,X):
@@ -37,12 +37,18 @@ class NWCompression:
     T   = np.geomspace(1e-6,1e-9,steps)
     # iteration scheme
     bar = tqdm(range(steps))
+
+    intermediates = []
+
     for i in bar:
       bar.set_description("%.15f" % loss(E,Y))
       d =  - lr * grad(E,Y) 
       mom = mom * xi  + d
       old_E = E.copy()
       E =  E + mom  + T[i] * np.random.normal(size = E.shape)
+
+      if return_intermediates:
+        intermediates.append(E)
 
       if np.isnan(E).any():
         break
@@ -55,8 +61,10 @@ class NWCompression:
 
     # save data
     self.E = E_fin.copy()
-    return
-
+    if return_intermediates:
+      return intermediates
+    else:
+      return
   # decoder functions
   def decode(self, e):
     return self.final_predict(e,self.E,self.Y)
