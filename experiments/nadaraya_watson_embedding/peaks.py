@@ -25,10 +25,10 @@ def main():
 
   # save plot of the data
   for i in classes:
-    plt.plot(Y[X_1 == i][0]   , alpha = 0.5, color = 'C%d' % i)   # trick for forcing the legend to show the correct colors
+    plt.plot(t,Y[X_1 == i][0]   , alpha = 0.5, color = 'C%d' % i)   # trick for forcing the legend to show the correct colors
 
   for i in classes:
-    plt.plot(Y[X_1 == i][1:].T, alpha = 0.5, color = 'C%d' % i)
+    plt.plot(t,Y[X_1 == i][1:].T, alpha = 0.5, color = 'C%d' % i)
 
   plt.legend(["c = %d" % i for i in classes])
   plt.savefig("peaks.pdf",bbox_inches='tight')
