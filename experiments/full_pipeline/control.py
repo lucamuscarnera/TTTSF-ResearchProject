@@ -28,7 +28,7 @@ def main():
 
   # try to reconstruct data
   embedding = encoder.batch_predict(X_test)
-  Y_hat     = decoder.batch_predict(embedding)
+  Y_hat     = decoder.batch_decode(embedding)
 
 if __name__ == '__main__':
   main()

@@ -7,8 +7,8 @@ from tqdm import tqdm
 
 class NWCompression:
   def __init__(self, embedding = None, timeseries = None):
-    self.embedding = embedding
-    self.timeseries = timeseries
+    self.E = embedding
+    self.Y = timeseries
     self.batch_predict = lambda X_in,X,Y : jax.vmap(lambda x: self.predict(x,X,Y))(X_in)
 
   base_configuration = {
@@ -70,6 +70,9 @@ class NWCompression:
   # decoder functions
   def decode(self, e):
     return self.final_predict(e,self.E,self.Y)
+
+  def batch_decode(self,E):
+    return jax.vmap(self.decode)(E)
 
   def k(self,x,y):
     return jnp.exp( - (x - y)@(x - y) )
