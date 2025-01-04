@@ -3,6 +3,7 @@
 # classic imports
 import pickle
 import sys
+import matplotlib.pyplot as plt
 
 # custom imports
 import libsfinder
@@ -24,11 +25,20 @@ def main():
   file_model = sys.argv[1]
   encoder, decoder = loadmodel(file_model)
 
-  X_test,Y_test    = peaks(100, seed = 44)
+  X_test,Y_test    = peaks(9, seed = 44)
 
   # try to reconstruct data
   embedding = encoder.batch_predict(X_test)
   Y_hat     = decoder.batch_decode(embedding)
+
+
+  axs = plt.figure(figsize = (9,9)).subplots(nrows = 3,ncols = 3).flatten()
+
+  for i,ax in enumerate(axs):
+    ax.plot(Y_hat[i])
+    ax.plot(Y_test[i])
+
+  plt.show()
 
 if __name__ == '__main__':
   main()
