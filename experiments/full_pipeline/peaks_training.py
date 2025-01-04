@@ -113,7 +113,7 @@ def main():
        },
        'decoder': {
              'embedding': compressor.E.copy(),
-             'time series': compressor.Y.copy()
+             'timeseries': compressor.Y.copy()
        }
     }
     pickle.dump(model, file)  # Serialize and save
