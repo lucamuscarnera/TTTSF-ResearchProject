@@ -6,7 +6,9 @@ import jax.numpy as jnp
 from tqdm import tqdm
 
 class NWCompression:
-  def __init__(self):
+  def __init__(self, embedding = None, timeseries = None):
+    self.embedding = embedding
+    self.timeseries = timeseries
     self.batch_predict = lambda X_in,X,Y : jax.vmap(lambda x: self.predict(x,X,Y))(X_in)
 
   base_configuration = {

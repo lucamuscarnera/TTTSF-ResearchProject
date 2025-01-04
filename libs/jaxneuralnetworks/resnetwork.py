@@ -16,9 +16,22 @@ import network
 
 class resnetwork():
   def __init__(self, net, W):
-    self.network = network.network(net.topology)
-    self.network.params = net.clone_params()
-    self.W      = W.copy()
+
+    # polymorphism
+
+    if type(net).__name__ == 'list':
+       # costruction from weights
+       topology     =   [ net[0].shape[1]  ] + [len(t) for t in net[1::2]]
+       params       =   net.copy()
+
+    else:
+       # passing directly the network
+       params = net.clone_params()
+       topology = net.topology
+
+    self.network        = network.network(topology)
+    self.network.params =  params
+    self.W              = W.copy()
 
   # combined prediction from the linear regressor and the
   # the neural network

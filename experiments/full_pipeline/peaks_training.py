@@ -3,6 +3,7 @@
 # classic imports
 import numpy as  np
 import matplotlib.pyplot as  plt
+import pickle
 
 # parallel computing
 import jax
@@ -11,6 +12,7 @@ import jax.numpy as jnp
 # custom imports
 import libsfinder
 from nwcompression.compute import NWCompression as nwc
+import jaxneuralnetworks
 from jaxneuralnetworks import network as jnn
 from jaxneuralnetworks import resnetwork as jrnn
 
@@ -48,7 +50,7 @@ def main():
   net    = jnn.network([X.shape[1], 200, 200, 200, compressor.E.shape[1]])
 
   configuration = jnn.network.base_configuration.copy()
-  configuration['epochs'] = 10_000 #  10_000
+  configuration['epochs'] = 100 #  10_000
   configuration['lr'] = 1e-2
   configuration['xi'] = 0.9
 
@@ -81,7 +83,7 @@ def main():
   ## show original data and reconstruction from embedding
   axs[1][0].scatter(E_hat[:,0],E_hat[:,1], c = coloring )
   axs[1][1].scatter(compressor.E[:,0], compressor.E[:,1], c = coloring)
-  plt.show()
+  # plt.show()
 
   # test some predictions
 
@@ -94,7 +96,27 @@ def main():
     axs[i].plot(Y_hat[i])
     axs[i].plot(Y_test[i])
 
-  plt.show()
+  # plt.show()
+
+  # save the pickle
+  with open('model.pkl', 'wb') as file:
+    model = {
+       'encoder' : {
+             'forward' : {
+                 'W' : W.copy(),
+                 'params' : net.params
+              },
+             'backward' : {
+                 'W' : W_inv.copy(),
+                 'params' : net_inv.params
+              }
+       },
+       'decoder': {
+             'embedding': compressor.E.copy(),
+             'time series': compressor.Y.copy()
+       }
+    }
+    pickle.dump(model, file)  # Serialize and save
 
 if __name__=='__main__':
   main()
