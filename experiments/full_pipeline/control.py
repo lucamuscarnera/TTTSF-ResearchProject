@@ -25,7 +25,7 @@ def main():
   file_model = sys.argv[1]
   encoder, decoder = loadmodel(file_model)
 
-  X_test,Y_test    = peaks(9, seed = 44)
+  X_test,Y_test    = peaks(9, seed = 45)
 
   # try to reconstruct data
   embedding = encoder.batch_predict(X_test)
@@ -33,7 +33,7 @@ def main():
 
 
   axs = plt.figure(figsize = (9,9)).subplots(nrows = 3,ncols = 3).flatten()
-
+  plt.suptitle("some predictions...")
   for i,ax in enumerate(axs):
     ax.plot(Y_hat[i])
     ax.plot(Y_test[i])

@@ -37,7 +37,7 @@ def main():
   net    = jnn.network([X.shape[1], 200, 200, 200, compressor.E.shape[1]])
 
   configuration = jnn.network.base_configuration.copy()
-  configuration['epochs'] = 100 #  10_000
+  configuration['epochs'] = 10_000 #  10_000
   configuration['lr'] = 1e-2
   configuration['xi'] = 0.9
 
