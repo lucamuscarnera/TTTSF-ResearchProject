@@ -3,6 +3,7 @@
 # imports
 import sys
 import os
+import jax
 
 # add the custom module folder for inputs, with absoulte path with respect to script position
 def get_script_path():
@@ -36,8 +37,11 @@ class resnetwork():
   # combined prediction from the linear regressor and the
   # the neural network
 
+  def phi(x):
+    return jnp.r_[1, x]
+
   def predict(self,x):
-    return self.network.predict(x) + self.W @ x
+    return self.network.predict(x) + self.W @ phi(x)
 
   def batch_predict(self, X):
     return jax.vmap(self.predict)(X)

@@ -10,6 +10,7 @@ from nwcompression.compute import NWCompression as nwc
 from jaxneuralnetworks import network as jnn
 from jaxneuralnetworks import resnetwork as jrnn
 from loadmodel import loadmodel
+from peaks_data import peaks
 
 def main():
   if len(sys.argv) == 1:
@@ -23,8 +24,11 @@ def main():
   file_model = sys.argv[1]
   encoder, decoder = loadmodel(file_model)
 
+  X_test,Y_test    = peaks(100, seed = 44)
 
+  # try to reconstruct data
+  embedding = encoder.batch_predict(X_test)
+  Y_hat     = decoder.batch_predict(embedding)
 
-  print(encoder.network.params[0].shape)
 if __name__ == '__main__':
   main()
