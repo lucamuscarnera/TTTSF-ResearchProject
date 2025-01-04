@@ -35,7 +35,7 @@ def main():
 
   # train the decoder and  latent  representation
   compressor   = nwc()
-  nwc.base_configuration['steps'] = 3000
+  nwc.base_configuration['steps'] = 3000 # 3000
   compressor.fit(Y, nwc.base_configuration)
 
   # train the encoder
@@ -48,7 +48,7 @@ def main():
   net    = jnn.network([X.shape[1], 200, 200, 200, compressor.E.shape[1]])
 
   configuration = jnn.network.base_configuration.copy()
-  configuration['epochs'] = 10_000
+  configuration['epochs'] = 10_000 #  10_000
   configuration['lr'] = 1e-2
   configuration['xi'] = 0.9
 
@@ -57,12 +57,30 @@ def main():
 
   E_hat  = phi(X) @ W + net.batch_predict(X)
 
+
+
+  # train the inverse map
+  W_inv      = np.linalg.pinv(phi(E_hat)) @ X
+  res        = X - (phi(E_hat) @ W_inv)
+  net_inv    = jnn.network([E_hat.shape[1], 200, 200, 200, X.shape[1]])
+
+  net_inv.train(E_hat, res,configuration)
+  encoder_inv = jrnn.resnetwork(net,W)
+  X_hat  = phi(E_hat) @ W_inv + net_inv.batch_predict(E_hat)
+
+
+  # show real embedding and predicted
   coloring = np.c_[E_hat[:,0],E_hat[:,1], 0 * E_hat[:,0]]
   coloring = (coloring - coloring.min(axis = 0)[None,:]) / (coloring.max(axis = 0) - coloring.min(axis=0))[None,:]
+  axs = plt.figure(figsize = (10,5)).subplots(nrows = 2, ncols = 2)
 
-  axs = plt.figure(figsize = (10,5)).subplots(nrows = 1, ncols = 2).flatten()
-  axs[0].scatter(E_hat[:,0],E_hat[:,1], c = coloring )
-  axs[1].scatter(compressor.E[:,0], compressor.E[:,1], c = coloring)
+  ## show  reconstructed embedding and original embedding
+  axs[0][0].scatter(X_hat[:,0],X_hat[:,1], c = coloring )
+  axs[0][1].scatter(X[:,0], X[:,1], c = coloring)
+
+  ## show original data and reconstruction from embedding
+  axs[1][0].scatter(E_hat[:,0],E_hat[:,1], c = coloring )
+  axs[1][1].scatter(compressor.E[:,0], compressor.E[:,1], c = coloring)
   plt.show()
 
   # test some predictions
