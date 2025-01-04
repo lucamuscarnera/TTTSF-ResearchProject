@@ -15,20 +15,7 @@ from nwcompression.compute import NWCompression as nwc
 import jaxneuralnetworks
 from jaxneuralnetworks import network as jnn
 from jaxneuralnetworks import resnetwork as jrnn
-
-def peaks(N,seed):
-  classes = [1,2,3,4]
-
-  np.random.seed(seed)
-  X_1 = np.random.choice(classes, size = N)
-  X_2 = np.random.uniform(size = N)
-
-  X   = np.c_[X_1,X_2]
-  t   = np.linspace(0,1,50)
-  def y(x,t):
-      return jnp.exp( - 10* x[0] * ( t - x[1])**2 )
-  Y   = jax.vmap(lambda x: y(x,t))(X)
-  return X,Y
+from peaks_data import peaks
 
 def main():
   # generate  data
