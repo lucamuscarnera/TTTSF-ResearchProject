@@ -23,4 +23,4 @@ def loadmodel(file_model):
   timeseries = model['decoder']['timeseries']
   decoder = nwc(embedding, timeseries)
 
-  return encoder, decoder
+  return encoder, decoder, encoder_backward

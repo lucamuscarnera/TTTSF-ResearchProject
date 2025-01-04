@@ -24,7 +24,7 @@ def main():
 
 
   file_model = sys.argv[1]
-  encoder, decoder = loadmodel(file_model)
+  encoder, decoder, encoder_backward = loadmodel(file_model)
 
   X_test,Y_test    = peaks(9, seed = 45)
 
@@ -44,11 +44,12 @@ def main():
   # control
 
   sample = 6
+  x_0                = X_test[sample]
   starting_embedding = embedding[sample]
   prompt = DrawPrompt(Y_hat[sample])
   y_wanted = prompt.data
 
-
+  # Find the optimal embedding
   e_final = (decoder.backward_predict(y_wanted, starting_embedding))
 
   y_obtained = decoder.decode(e_final)
@@ -56,6 +57,13 @@ def main():
   plt.plot(Y_hat[sample])
   plt.plot(y_wanted)
   plt.show()
+
+
+  x_optimal = encoder_backward.predict(e_final)
+
+  # bring it back to feature space
+  for i,x_0_i, x_f_i in zip(range(len(e_final)),x_0, x_optimal):
+    print(" Feature [%d] \t\t\t %.4f \t -> \t %.4f" % (i,x_0_i,x_f_i) )
 
 if __name__ == '__main__':
   main()
