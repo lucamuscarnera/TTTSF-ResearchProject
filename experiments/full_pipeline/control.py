@@ -12,6 +12,7 @@ from jaxneuralnetworks import network as jnn
 from jaxneuralnetworks import resnetwork as jrnn
 from loadmodel import loadmodel
 from peaks_data import peaks
+from interactive_prompt import DrawPrompt
 
 def main():
   if len(sys.argv) == 1:
