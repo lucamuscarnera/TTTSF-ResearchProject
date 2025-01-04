@@ -41,5 +41,21 @@ def main():
 
   plt.show()
 
+  # control
+
+  sample = 6
+  starting_embedding = embedding[sample]
+  prompt = DrawPrompt(Y_hat[sample])
+  y_wanted = prompt.data
+
+
+  e_final = (decoder.backward_predict(y_wanted, starting_embedding))
+
+  y_obtained = decoder.decode(e_final)
+  plt.plot(y_obtained)
+  plt.plot(Y_hat[sample])
+  plt.plot(y_wanted)
+  plt.show()
+
 if __name__ == '__main__':
   main()

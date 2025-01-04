@@ -102,3 +102,17 @@ class NWCompression:
     x_hat = C.sum(axis = 0) / K.sum()
     return x_hat
 
+
+  # backward construction; given a timeseries recovers the embedding
+
+  def backward_predict(self, y, e_0):
+    def loss(e,y,E,Y):
+      return jnp.sum((self.predict(e, E, Y) - y)**2)
+    grad = jax.grad(loss)
+
+    bar = tqdm(range(1000))
+    e   = e_0.copy()
+    for i in bar:
+      e -= 1e-2 * grad(e,y,self.E,self.Y)
+      bar.set_description("%.12f" % loss(e,y, self.E, self.Y))
+    return e
