@@ -41,24 +41,20 @@ def main():
 
   # train the decoder and  latent  representation
   compressor   = nwc()
-  nwc.base_configuration['steps'] = 3000 # 3000
-  compressor.fit(Y, nwc.base_configuration)
+  compressor.fit(Y, compressor_config)
 
   # train the encoder
   def phi(X):
     return np.c_[ np.ones((len(X),1)), X]
 
   # train the linear encoder
-  W      = np.linalg.pinv(phi(X)) @ compressor.E
-  res    = compressor.E - (phi(X) @ W)
-  net    = jnn.network([X.shape[1], 200, 200, 200, compressor.E.shape[1]])
+  net_topology = network_config['topology']
+  W            = np.linalg.pinv(phi(X)) @ compressor.E
+  res          = compressor.E - (phi(X) @ W)
+  net          = jnn.network(net_topology)
 
-  configuration = jnn.network.base_configuration.copy()
-  configuration['epochs'] = 10_000 #  10_000
-  configuration['lr'] = 1e-2
-  configuration['xi'] = 0.9
 
-  net.train(X, res,configuration)
+  net.train(X, res, network_config)   # use the configuration loaded  from the json
   encoder = jrnn.resnetwork(net,W)
 
   E_hat  = phi(X) @ W + net.batch_predict(X)
@@ -68,9 +64,9 @@ def main():
   # train the inverse map
   W_inv      = np.linalg.pinv(phi(E_hat)) @ X
   res        = X - (phi(E_hat) @ W_inv)
-  net_inv    = jnn.network([E_hat.shape[1], 200, 200, 200, X.shape[1]])
+  net_inv    = jnn.network(net_topology)
 
-  net_inv.train(E_hat, res,configuration)
+  net_inv.train(E_hat, res, network_config)
   encoder_inv = jrnn.resnetwork(net,W)
   X_hat  = phi(E_hat) @ W_inv + net_inv.batch_predict(E_hat)
 
@@ -90,17 +86,6 @@ def main():
   # plt.show()
 
   # test some predictions
-
-  X_test,Y_test = peaks(9, 42)
-  axs = plt.figure(figsize = (9,9)).subplots(nrows = 3,ncols = 3).flatten()
-  E_hat =  phi(X_test) @ W + net.batch_predict(X_test)
-  Y_hat =  jax.vmap(compressor.decode)(E_hat)
-
-  for i in range(len(X_test)):
-    axs[i].plot(Y_hat[i])
-    axs[i].plot(Y_test[i])
-
-  # plt.show()
 
   # save the pickle
   with open('model.pkl', 'wb') as file:

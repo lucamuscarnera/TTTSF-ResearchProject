@@ -14,7 +14,8 @@ class NWCompression:
   base_configuration = {
      'lr': 1e-3,
      'xi': 0.9,
-     'steps' : 1000
+     'steps' : 1000,
+     'dimension' : 2
   }
 
   def fit(self, Y, configuration,seed = 0, return_intermediates = False):
@@ -24,15 +25,17 @@ class NWCompression:
       return (( self.batch_predict(E,E,X) -  X )**2).sum()
     grad = jax.jit(jax.grad(loss))
 
-    # initialize the "big" arrays
-    self.Y = Y.copy()
-    np.random.seed(seed)
-    E = np.random.randn(Y.shape[0],2) *  1e-10
 
     # training
     lr = configuration['lr'] # learning rate
     xi = configuration['xi'] # momentum coefficient
     steps = configuration['steps'] # number of iteratinos
+    dimension = configuration['dimension'] # embedding size
+
+    # initialize the "big" arrays
+    self.Y = Y.copy()
+    np.random.seed(seed)
+    E = np.random.randn(Y.shape[0],dimension) *  1e-10
 
     E_fin = E.copy()
     mom    = E * 0
@@ -43,7 +46,7 @@ class NWCompression:
     intermediates = []
 
     for i in bar:
-      bar.set_description("%.15f" % loss(E,Y))
+      bar.set_description("%.15f" % loss(E_fin,Y))
       d =  - lr * grad(E,Y) 
       mom = mom * xi  + d
       old_E = E.copy()
