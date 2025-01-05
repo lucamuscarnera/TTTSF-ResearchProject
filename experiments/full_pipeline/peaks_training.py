@@ -4,6 +4,7 @@
 import numpy as  np
 import matplotlib.pyplot as  plt
 import pickle
+import sys
 
 # parallel computing
 import jax
@@ -18,9 +19,17 @@ from jaxneuralnetworks import resnetwork as jrnn
 from peaks_data import peaks
 
 def main():
+
+  # argv partition
+
+  covariates_csv = sys.argv[1]
+  timeseries_csv = sys.argv[2]
+  output_pkl     = sys.argv[3]
+
   # generate  data
-  N            = 1000
-  X,Y          = peaks(N,6_01_2025)
+  X            = jnp.array(np.genfromtxt(covariates_csv,delimiter=','))
+  Y            = jnp.array(np.genfromtxt(timeseries_csv,delimiter=','))
+  N            = len(X)
 
   # train the decoder and  latent  representation
   compressor   = nwc()
