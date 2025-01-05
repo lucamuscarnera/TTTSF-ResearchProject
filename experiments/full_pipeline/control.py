@@ -55,7 +55,7 @@ def main():
       starting_embedding  = encoder.predict(x_0)
       starting_trajectory = decoder.decode(starting_embedding)
       
-      prompt = DrawPrompt(starting_trajectory)
+      prompt = DrawPrompt(starting_trajectory, min_quota  = decoder.Y.min(), max_quota = decoder.Y.max())
       y_wanted = prompt.data
       
       # Find the optimal embedding

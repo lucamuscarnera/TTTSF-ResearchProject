@@ -6,7 +6,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class DrawPrompt:
-  def __init__(self,original, min_height = 0, max_height = 10.):
+  def __init__(self,original, min_quota,  max_quota):
+
+    self.max_quota = max_quota #original.max()
+    self.min_quota = min_quota #original.min()
+
     root = tk.Tk()
     self.root = root
     self.original = original
@@ -44,8 +48,8 @@ class DrawPrompt:
 
   def get_vertical_pos(self,v, x):
     query = v[x]
-    m = v.min()
-    M = v.max()
+    m = self.min_quota #v.min()
+    M = self.max_quota #v.max()
     return self.quantization - (v[x] - m)/(M - m) * self.quantization
 
   def paint(self, event):
@@ -83,7 +87,7 @@ class DrawPrompt:
   def save_canvas(self):
     self.root.destroy();
     vertical_positions = (self.cells[-1::-1].argmax(axis = 0))
-    self.data = vertical_positions /(self.quantization * 1.) * (self.original.max() - self.original.min())  + self.original.min()
+    self.data = vertical_positions /(self.quantization * 1.) * (self.max_quota - self.min_quota)  + self.min_quota
     self.data = np.interp(np.arange(len(vertical_positions)),
                           np.arange(len(vertical_positions))[vertical_positions != 0],
                           self.data[vertical_positions != 0])

@@ -6,7 +6,7 @@
    "dimension"   : 4
    },
  "network" : {
-   "epochs" : 10000,
+   "epochs" : 50000,
    "lr"     : 0.01,
    "xi"     : 0.9,
    "topology"    : [4,700,700,4],
