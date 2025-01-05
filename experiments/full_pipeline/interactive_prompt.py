@@ -22,7 +22,7 @@ class DrawPrompt:
     # vertical quantization
     self.quantization = 100
     # how large is a pixel?
-    self.horizontal_cell_size = 5
+    self.horizontal_cell_size = int(np.ceil(1000 / self.length))
     self.vertical_cell_size   = 5
 
     # compute canvass properties
