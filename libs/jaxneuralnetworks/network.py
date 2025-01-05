@@ -16,17 +16,26 @@ class network:
   base_configuration = {
      'lr': 1e-1,
      'xi': 0.9,
-     'epochs' : 100
+     'epochs' : 100,
+     'mode' : 'gd'
   }
   def train(self,X,Y, configuration):
     lr      = configuration['lr']       # learning rate
     xi      = configuration['xi']       # momentum coefficient
     epochs  = configuration['epochs']   # number of epochs
+    mode    = configuration['mode']     # gd/sgd
 
     mom     = [ 0 * p for p in self.params ]
     bar     = tqdm(range(epochs))
     for i in bar:
-      gradient = self._batch_grad(self.params, X, Y)
+      if mode == 'gd':
+        gradient = self._batch_grad(self.params, X, Y)
+      else:
+        if mode == 'sgd':
+          minibatch = configuration['minibatch']
+          indexes   = np.random.choice(len(X), minibatch)
+          gradient  = self._batch_grad(self.params, X[indexes], Y[indexes])
+
       for j in range(len(self.params)):
         mom[j] = mom[j] * xi - lr * gradient[j]
         self.params[j] += mom[j]

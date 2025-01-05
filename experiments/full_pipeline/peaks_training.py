@@ -88,7 +88,7 @@ def main():
   # test some predictions
 
   # save the pickle
-  with open('model.pkl', 'wb') as file:
+  with open(output_pkl, 'wb') as file:
     model = {
        'encoder' : {
              'forward' : {
