@@ -113,8 +113,15 @@ class NWCompression:
     bar = tqdm(range(1000))
     e   = e_0.copy()
     mom = e * 0
+    lr  = 1e-3
     for i in bar:
-      mom = .9 * mom - 1e-2 * grad(e,y,self.E,self.Y)
-      e   = e + mom
+      g       = grad(e,y,self.E,self.Y)
+      new_e   = e - lr * g 
+      if loss(new_e,y, self.E, self.Y) < loss(e,y, self.E, self.Y):
+        e = new_e 
+        lr *= 1.1
+      else: 
+        lr *= 0.8
+        
       bar.set_description("%.12f" % loss(e,y, self.E, self.Y))
     return e
