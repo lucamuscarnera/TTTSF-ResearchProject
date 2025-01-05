@@ -1,6 +1,6 @@
 #!usr/bin/env python
 
-# classic imports
+#  classic imports
 import pickle
 import sys
 import matplotlib.pyplot as plt
