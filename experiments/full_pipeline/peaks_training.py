@@ -19,7 +19,7 @@ from peaks_data import peaks
 
 def main():
   # generate  data
-  N            = 150
+  N            = 1000
   X,Y          = peaks(N,6_01_2025)
 
   # train the decoder and  latent  representation

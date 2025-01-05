@@ -14,14 +14,26 @@ from loadmodel import loadmodel
 from peaks_data import peaks
 from interactive_prompt import DrawPrompt
 
+# small graphics
+def logo():
+ print('\t\t\t', r'  /$$$$$$    Time Series Control /$$  Toolkit                /$$')
+ print('\t\t\t', r' /$$__  $$                      | $$                        | $$')
+ print('\t\t\t', r'| $$  \__/  /$$$$$$  /$$$$$$$  /$$$$$$    /$$$$$$   /$$$$$$ | $$')
+ print('\t\t\t', r'| $$       /$$__  $$| $$__  $$|_  $$_/   /$$__  $$ /$$__  $$| $$')
+ print('\t\t\t', r'| $$      | $$  \ $$| $$  \ $$  | $$    | $$  \__/| $$  \ $$| $$')
+ print('\t\t\t', r'| $$    $$| $$  | $$| $$  | $$  | $$ /$$| $$      | $$  | $$| $$')
+ print('\t\t\t', r'|  $$$$$$/|  $$$$$$/| $$  | $$  |  $$$$/| $$      |  $$$$$$/| $$')
+ print('\t\t\t', r' \______/  \______/ |__/  |__/   \___/  |__/       \______/ |__/')
+                                                               
 def main():
   if len(sys.argv) == 1:
-    print("\t\t +--------------------------------------------+")
-    print("\t\t | [Error] Missing model data. Run as         |")
-    print("\t\t | >> $ conda run control.py namemodel.pkl    |")
-    print("\t\t +--------------------------------------------+")
+    print("")
+    print("[!] Error: no model loaded. Run the application as")
+    print("  $ conda run conda run --no-capture-output python3 -u ./explain.py modelname.pkl")
+    print("")
     return
 
+  logo()
 
   file_model = sys.argv[1]
   encoder, decoder, encoder_backward = loadmodel(file_model)
