@@ -1,0 +1,15 @@
+{
+ "compressor" : {
+   "steps" : 15000,
+   "lr"    : 0.001,
+   "xi"    : 0.9,
+   "dimension"   : 2
+   },
+ "network" : {
+   "epochs" : 10000,
+   "lr"     : 0.001,
+   "xi"     : 0.99,
+   "topology"    : [1,500,500,2],
+   "mode" : "gd"
+  }
+}

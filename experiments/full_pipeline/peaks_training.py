@@ -36,6 +36,9 @@ def main():
 
   # generate  data
   X            = jnp.array(np.genfromtxt(covariates_csv,delimiter=','))
+  if len(X.shape) == 1:
+    X          = X[:,None]   # univariate data should be casted to a matrix form
+
   Y            = jnp.array(np.genfromtxt(timeseries_csv,delimiter=','))
   N            = len(X)
 
@@ -49,6 +52,8 @@ def main():
 
   # train the linear encoder
   net_topology = network_config['topology']
+  del network_config['topology']                            # destroy information on the topology since it is not required to be in the configuration dictionary after taking its value
+
   W            = np.linalg.pinv(phi(X)) @ compressor.E
   res          = compressor.E - (phi(X) @ W)
   net          = jnn.network(net_topology)
@@ -64,7 +69,7 @@ def main():
   # train the inverse map
   W_inv      = np.linalg.pinv(phi(E_hat)) @ X
   res        = X - (phi(E_hat) @ W_inv)
-  net_inv    = jnn.network(net_topology)
+  net_inv    = jnn.network(net_topology[-1::-1])  # the topology is inverted
 
   net_inv.train(E_hat, res, network_config)
   encoder_inv = jrnn.resnetwork(net,W)
