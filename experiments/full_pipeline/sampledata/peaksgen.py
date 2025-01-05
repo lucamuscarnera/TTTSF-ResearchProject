@@ -27,7 +27,7 @@ def main():
   csv_name = sys.argv[1]
   seed     = int(sys.argv[2])
 
-  X,Y      = peaks(1000, seed)
+  X,Y      = peaks(10000, seed)
   np.savetxt(csv_name + "_covariates.csv", X, delimiter = ',')
   np.savetxt(csv_name + "_timeseries.csv", Y, delimiter = ',')
 

@@ -20,10 +20,10 @@ class DrawPrompt:
     self.root.title("Draw a Timeserie")
 
     # vertical quantization
-    self.quantization = 50
+    self.quantization = 100
     # how large is a pixel?
-    self.horizontal_cell_size = 10
-    self.vertical_cell_size   = 10
+    self.horizontal_cell_size = 5
+    self.vertical_cell_size   = 5
 
     # compute canvass properties
     self.width  =  self.length * self.horizontal_cell_size
