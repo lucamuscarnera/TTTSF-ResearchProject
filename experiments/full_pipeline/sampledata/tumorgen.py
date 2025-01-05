@@ -32,7 +32,7 @@ def tumor(N,seed):
 
   t     = np.linspace(0,1,200)
   Y     = np.array([
-        (phi_i * np.exp( - d_i * t  ) + (1 - phi_i) * np.exp(g_i * t) - 1) + itv_i
+        (phi_i * np.exp( - d_i * t  ) + (1 - phi_i) * np.exp(g_i * t) - 1) * itv_i
     for g_i,d_i,phi_i,itv_i in zip(g,d,phi, rescale(initial_tumor_volume,0.1,0.5))
   ])
 
