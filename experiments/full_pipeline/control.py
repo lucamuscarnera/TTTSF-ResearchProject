@@ -4,6 +4,11 @@
 import pickle
 import sys
 import matplotlib.pyplot as plt
+import os 
+import readline
+
+import warnings
+warnings.filterwarnings("ignore")
 
 # custom imports
 import libsfinder
@@ -68,7 +73,10 @@ def main():
       for i,x_0_i, x_f_i in zip(range(len(e_final)),x_0, x_optimal):
         print(" Feature [%d] \t\t\t %.4f \t -> \t %.4f" % (i,x_0_i,x_f_i) )
 
-    
+    if(tokens[0] == 'clear'):
+      os.system('clear')
+      logo()
+      
     if tokens[0] == 'q':
       break
 

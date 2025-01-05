@@ -122,6 +122,9 @@ class NWCompression:
         lr *= 1.1
       else: 
         lr *= 0.8
-        
       bar.set_description("%.12f" % loss(e,y, self.E, self.Y))
+
+      if lr < 1e-15:
+        print("Coverged earlier")
+        break
     return e
