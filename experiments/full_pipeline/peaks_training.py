@@ -17,6 +17,8 @@ import jaxneuralnetworks
 from jaxneuralnetworks import network as jnn
 from jaxneuralnetworks import resnetwork as jrnn
 from peaks_data import peaks
+import json
+
 
 def main():
 
@@ -25,6 +27,12 @@ def main():
   covariates_csv = sys.argv[1]
   timeseries_csv = sys.argv[2]
   output_pkl     = sys.argv[3]
+  config_json    = sys.argv[4]
+  with open(config_json, 'r') as file:
+    config_data  = json.load(file)
+    compressor_config = config_data['compressor']
+    network_config    = config_data['network']
+
 
   # generate  data
   X            = jnp.array(np.genfromtxt(covariates_csv,delimiter=','))
