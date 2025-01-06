@@ -43,7 +43,12 @@ def perturbative_analysis(e, E, scale, encoder, decoder, encoder_backward):
   U,s,Vt    = np.linalg.svd(F_loc, full_matrices = False)
   print("s = %s" % s, Vt.shape)
 
-  axs = plt.figure(figsize = (len(s) * 5,5)).subplots(nrows = 1, ncols = len(s)).flatten()
+  axs = plt.figure(figsize = (len(s) * 5,5)).subplots(nrows = 1, ncols = len(s))
+  if(type(axs).__name__ == 'ndarray'):
+    axs = axs.flatten()
+  else:
+    axs = [axs]
+
   for i in range(len(s)):
     axs[i].set_title("strength = %.3f" % s[i])
     F_vr      = np.linspace(- jnp.sqrt(s[i]) ,jnp.sqrt(s[i]) ,100)[:,None] * Vt.T[:,i]
