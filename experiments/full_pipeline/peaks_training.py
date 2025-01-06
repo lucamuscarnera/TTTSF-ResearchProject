@@ -80,7 +80,7 @@ def main():
   res        = X - (phi(E_hat) @ W_inv)
   net_inv    = jnn.network(back_net_topology)  # the topology is inverted
 
-  net_inv.train(E_hat, res, network_config)
+  net_inv.train(E_hat, res, backward_network_config)
   encoder_inv = jrnn.resnetwork(net,W)
   X_hat  = phi(E_hat) @ W_inv + net_inv.batch_predict(E_hat)
 
