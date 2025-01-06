@@ -1,14 +1,22 @@
 {
  "compressor" : {
-   "steps" : 3000,
+   "steps" : 5000,
    "lr"    : 0.001,
    "xi"    : 0.9,
    "dimension"   : 4
    },
  "network" : {
-   "epochs" : 100000,
+   "epochs" : 10000,
    "lr"     : 0.01,
    "xi"     : 0.9,
+   "topology"    : [4,700,700,4],
+   "mode" : "gd",
+   "minibatch" : 32
+  },
+ "network" : {
+   "epochs" : 10000,
+   "lr"     : 0.01,
+   "xi"     : 0.99,
    "topology"    : [4,700,700,4],
    "mode" : "gd",
    "minibatch" : 32
