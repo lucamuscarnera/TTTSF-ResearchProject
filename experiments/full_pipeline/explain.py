@@ -29,6 +29,24 @@ def logo():
 # to understand the degrees of freedom that the prediction is likely to
 # have. Then returns the information
 
+def plot_similar(e,E,scale,encoder,decoder, encoder_backward):
+  # algorithm for describe locally the distribution in the embedding
+  f     = encoder_backward.predict(e)
+  base_predict = decoder.decode(e)
+
+  E_loc = E[jnp.linalg.norm(E - e, axis = 1) < scale]
+  Y_loc = jax.vmap(decoder.decode)(E_loc)
+  X_loc = jax.vmap(encoder_backward.predict)(E_loc)
+
+  axs   = plt.figure(figsize = (10,5)).subplots(nrows = 1, ncols = 2).flatten()
+  axs[0].plot(Y_loc.T, color = 'black', alpha = 0.1)
+  axs[0].plot(base_predict, color = 'black', lw = 3.0)
+
+  axs[1].boxplot(X_loc, vert=True, patch_artist=True) # box plot of close data
+  plt.show()
+
+
+
 def perturbative_analysis(e, E, scale, encoder, decoder, encoder_backward):
   # algoritmo di selezione simil dbscan
 
@@ -96,6 +114,14 @@ def main():
       embedding     = encoder.predict(featurevector)
       E     = decoder.E
       perturbative_analysis(embedding,E,scale,encoder,decoder,encoder_backward)
+
+    if(tokens[0] == 'similar'):
+      scale = float(tokens[1])
+      featurevector = np.array(tokens[2:]).astype(float)
+      # predict the embedding
+      embedding     = encoder.predict(featurevector)
+      E     = decoder.E
+      plot_similar(embedding,E,scale,encoder,decoder,encoder_backward)
 
     if(tokens[0] == 'clear'):
       os.system('clear')
