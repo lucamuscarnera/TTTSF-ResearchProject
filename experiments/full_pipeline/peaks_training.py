@@ -32,7 +32,11 @@ def main():
     config_data  = json.load(file)
     compressor_config = config_data['compressor']
     network_config    = config_data['network']
-
+    if 'backward_network' in config_data:
+      backward_network_config = config_data['backward_network']                                   # if it is explicitly described ok
+    else:
+      backward_network_config = network_config.copy()
+      backward_network_config['topology'] =  backward_network_config['topology'].copy()[-1::-1]   # if not copy the forward network and reverse the topology
 
   # generate  data
   X            = jnp.array(np.genfromtxt(covariates_csv,delimiter=','))
@@ -53,6 +57,7 @@ def main():
   # train the linear encoder
   net_topology = network_config['topology']
   del network_config['topology']                            # destroy information on the topology since it is not required to be in the configuration dictionary after taking its value
+  print("forward network structure : %s" %  net_topology)
 
   W            = np.linalg.pinv(phi(X)) @ compressor.E
   res          = compressor.E - (phi(X) @ W)
@@ -67,9 +72,13 @@ def main():
 
 
   # train the inverse map
+  back_net_topology = backward_network_config['topology']
+  del backward_network_config['topology']
+  print("backward network structure : %s" %  back_net_topology)
+
   W_inv      = np.linalg.pinv(phi(E_hat)) @ X
   res        = X - (phi(E_hat) @ W_inv)
-  net_inv    = jnn.network(net_topology[-1::-1])  # the topology is inverted
+  net_inv    = jnn.network(back_net_topology)  # the topology is inverted
 
   net_inv.train(E_hat, res, network_config)
   encoder_inv = jrnn.resnetwork(net,W)
