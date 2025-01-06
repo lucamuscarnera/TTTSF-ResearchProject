@@ -14,6 +14,8 @@ in my work.
 The repository is mainly divided into ```libs```  and ```experiments```. The first folder contains the modules while the second contains the experimments
 that I mentioned in the paper. The experiments cover different topics, providing empirical support to the structure of the paper.
 
+# Run an experiment
+
 To run a python script is sufficient to run in bash
 
 ```
