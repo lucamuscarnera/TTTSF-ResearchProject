@@ -9,5 +9,5 @@ It provides, moreover, two additional folders.
 
 # Script launch structure
 
-```./sampledata/*gen.py <name>  <seed>``` --> creates two csv files <name>_covariates.csv and  <name>_timeseries.csv 
-```./training <covariates_csv> <timeseries_csv> <output> <config> ```` the first two fields describe the input dataset (see previous command for an example)  and <output> is instead the pkl  file that will contain the model. Config finally is the json configuration file that manages the training 
+- ```./sampledata/*gen.py <name>  <seed>``` --> creates two csv files <name>_covariates.csv and  <name>_timeseries.csv 
+- ```./training <covariates_csv> <timeseries_csv> <output> <config> ```` the first two fields describe the input dataset (see previous command for an example)  and <output> is instead the pkl  file that will contain the model. Config finally is the json configuration file that manages the training 
