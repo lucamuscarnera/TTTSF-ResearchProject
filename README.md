@@ -26,3 +26,6 @@ conda run --no-capture-output python3 -u ./scriptname.py arg1 arg2 arg3 ...
 Some scripts require a list of argument to run. Please refer to the README file in each  folder
 
 
+# Environment
+
+a ```.yml``` file with all the dependencies is provided
