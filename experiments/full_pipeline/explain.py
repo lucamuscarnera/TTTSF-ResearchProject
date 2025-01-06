@@ -48,18 +48,15 @@ def plot_similar(e,E,scale,encoder,decoder, encoder_backward):
 
 
 def perturbative_analysis(e, E, scale, encoder, decoder, encoder_backward):
-  # algoritmo di selezione simil dbscan
-
-  f     = encoder_backward.predict(e)
   base_predict = decoder.decode(e)
 
   E_loc = E[jnp.linalg.norm(E - e, axis = 1) < scale]
-  F_loc = jax.vmap(encoder_backward.predict)(E_loc)
-  F_loc = F_loc  - f
+  E_loc = E_loc - e                                                 # ball centered in the computed embedding
 
-  print("Neighbours = %d" % len(F_loc))
-  U,s,Vt    = np.linalg.svd(F_loc, full_matrices = False)
+  print("Neighbours = %d" % len(E_loc))
+  U,s,Vt    = np.linalg.svd(E_loc, full_matrices = False)
   print("s = %s" % s, Vt.shape)
+
 
   axs = plt.figure(figsize = (len(s) * 5,5)).subplots(nrows = 1, ncols = len(s))
   if(type(axs).__name__ == 'ndarray'):
@@ -67,13 +64,14 @@ def perturbative_analysis(e, E, scale, encoder, decoder, encoder_backward):
   else:
     axs = [axs]
 
+
   for i in range(len(s)):
-    axs[i].set_title("strength = %.3f" % s[i])
-    F_vr      = np.linspace(- jnp.sqrt(s[i]) ,jnp.sqrt(s[i]) ,100)[:,None] * Vt.T[:,i]
-    F_vr     += f.flatten()
+    axs[i].set_title("s = %.3f" % s[i])
+    E_vr      = np.linspace(- s[i] , s[i] ,100)[:,None] * Vt.T[:,i]
+    E_vr     += e
 
     # compute the perturbed trajectories
-    Y_hat     = jax.vmap(lambda f_loc: decoder.decode(encoder.predict(f_loc)))(F_vr)
+    Y_hat     = jax.vmap(lambda e_loc: decoder.decode(e_loc))(E_vr)
 
     for j in range(100):
       axs[i].plot(Y_hat[j], color = [j / 100.,0.,1. - j / 100.])
